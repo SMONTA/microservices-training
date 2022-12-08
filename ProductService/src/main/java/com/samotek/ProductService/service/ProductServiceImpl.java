@@ -1,11 +1,11 @@
 package com.samotek.ProductService.service;
 
 import com.samotek.ProductService.entity.Product;
+import com.samotek.ProductService.execption.ProductServiceCustomException;
 import com.samotek.ProductService.model.ProductRequest;
 import com.samotek.ProductService.model.ProductResponse;
 import com.samotek.ProductService.repository.ProductRepository;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -38,8 +38,11 @@ public class ProductServiceImpl implements ProductService {
   public ProductResponse getProductById(long productId) {
     log.info("Fetching product with id: {}", productId);
     var referenceById = productRepository.findById(productId)
-                                         .orElseThrow(() -> new RuntimeException(
-                                             String.format("Product with id %d not found.", productId)));
+                                         .orElseThrow(() -> {
+                                           var errMsg = String.format("Product with id %d not found.", productId);
+                                           log.error(errMsg);
+                                           return new ProductServiceCustomException(errMsg, "PRODUCT_NOT_FOUND");
+                                         });
 //    Only works when attributes matches between src/dest
 //    var pResponse = new ProductResponse();
 //    BeanUtils.copyProperties(referenceById, pResponse);
