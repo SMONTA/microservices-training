@@ -1,1 +1,12 @@
-
+server:
+  port: 9296
+spring:
+  application:
+    name: CONFIG_SERVER
+  profiles:
+    active: native
+  cloud:
+    config:
+      server:
+        native:
+          search-locations: file:///home/saber/01_spring_training/microservices-training/application.yml
