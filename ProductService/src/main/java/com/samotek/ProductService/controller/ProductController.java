@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @date 12/8/22
  */
 @RestController
-@RequestMapping("/products/v1/")
+@RequestMapping("/products/v1")
 public class ProductController {
 
   @Autowired
@@ -45,5 +45,5 @@ public class ProductController {
     productService.reduceQuantity(productId, quantity);
     return new ResponseEntity<>(HttpStatus.OK);
   }
-  
+
 }

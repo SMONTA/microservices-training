@@ -1,6 +1,7 @@
 package com.samotek.orderservice.service;
 
 import com.samotek.orderservice.entity.Order;
+import com.samotek.orderservice.external.client.ProductService;
 import com.samotek.orderservice.model.OrderRequest;
 import com.samotek.orderservice.repository.OrderRepository;
 import lombok.extern.log4j.Log4j2;
@@ -20,6 +21,9 @@ public class OrderServiceImpl implements OrderService {
   @Autowired
   private OrderRepository orderRepository;
 
+  @Autowired
+  private ProductService productService;
+
   @Override
   public long placeOrder(OrderRequest request) {
 
@@ -27,6 +31,8 @@ public class OrderServiceImpl implements OrderService {
 //    Product Service -> Block Products (reduce quantity)
 //    Payment Service: Payments -> Success -> COMPLETE, Else CANCELLED
     log.info("Placing order request: {}", request);
+    productService.reduceQuantity(request.getProductId(), request.getQuantity());
+    log.info("Creating an order with status CREATED");
     var order = Order.builder()
                      .productId(request.getProductId())
                      .amount(request.getTotalAmount())
