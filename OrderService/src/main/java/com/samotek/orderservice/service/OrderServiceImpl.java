@@ -4,6 +4,7 @@ import com.samotek.orderservice.entity.Order;
 import com.samotek.orderservice.exception.CustomException;
 import com.samotek.orderservice.external.client.PaymentService;
 import com.samotek.orderservice.external.client.ProductService;
+import com.samotek.orderservice.external.reponse.ProductResponse;
 import com.samotek.orderservice.external.request.PaymentRequest;
 import com.samotek.orderservice.model.OrderRequest;
 import com.samotek.orderservice.model.OrderResponse;
@@ -11,6 +12,7 @@ import com.samotek.orderservice.repository.OrderRepository;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.time.Instant;
 
@@ -30,6 +32,9 @@ public class OrderServiceImpl implements OrderService {
 
   @Autowired
   private PaymentService paymentService;
+
+  @Autowired
+  private RestTemplate restTemplate;
 
   @Override
   public long placeOrder(OrderRequest request) {
@@ -74,15 +79,31 @@ public class OrderServiceImpl implements OrderService {
 
   @Override
   public OrderResponse getOrderDetails(long orderId) {
+//    getting order details
+    log.info("Getting order details for the order id {}", orderId);
     var orderEntity = orderRepository.findById(orderId)
                                      .orElseThrow(() -> new CustomException("No order found that match the id: "
                                                                             + orderId, "ORDER_NOT_FOUND", 500));
+//    getting product details
+    log.info("Fetching product details for the product id: {} ", orderEntity.getProductId());
+    var pResponse = restTemplate.getForObject(
+        "http://PRODUCT-SERVICE/products/v1/" + orderEntity.getProductId(),
+        ProductResponse.class);
+
+    OrderResponse.ProductDetails pDetails =
+        OrderResponse.ProductDetails.builder()
+                                    .productId(pResponse.getProductId())
+                                    .productName(pResponse.getName())
+                                    .quantity(pResponse.getQuantity())
+                                    .price(pResponse.getPrice())
+                                    .build();
 
     return OrderResponse.builder()
                         .orderId(orderId)
                         .amount(orderEntity.getAmount())
                         .orderDate(orderEntity.getOrderDate())
                         .orderStatus(orderEntity.getOrderStatus())
+                        .productDetails(pDetails)
                         .build();
 
   }
