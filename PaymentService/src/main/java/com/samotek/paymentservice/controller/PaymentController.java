@@ -16,13 +16,13 @@ import org.springframework.web.bind.annotation.RestController;
  * @date 12/25/22
  */
 @RestController
-@RequestMapping("/payment/v1/")
+@RequestMapping("/payment/v1")
 public class PaymentController {
 
   @Autowired
   private PaymentService paymentService;
 
-  @PostMapping("doPayment")
+  @PostMapping("/doPayment")
   public ResponseEntity<Long> doPayment(@RequestBody PaymentRequest request){
     return  new ResponseEntity<>(paymentService.doPayment(request),
                                  HttpStatus.OK);

@@ -1,7 +1,9 @@
 package com.samotek.orderservice.service;
 
 import com.samotek.orderservice.entity.Order;
+import com.samotek.orderservice.external.client.PaymentService;
 import com.samotek.orderservice.external.client.ProductService;
+import com.samotek.orderservice.external.request.PaymentRequest;
 import com.samotek.orderservice.model.OrderRequest;
 import com.samotek.orderservice.repository.OrderRepository;
 import lombok.extern.log4j.Log4j2;
@@ -24,6 +26,9 @@ public class OrderServiceImpl implements OrderService {
   @Autowired
   private ProductService productService;
 
+  @Autowired
+  private PaymentService paymentService;
+
   @Override
   public long placeOrder(OrderRequest request) {
 
@@ -43,6 +48,25 @@ public class OrderServiceImpl implements OrderService {
 
     orderRepository.save(order);
     log.info("Order successfully created with id: {}", order.getId());
+    var paymentRequest = PaymentRequest.builder()
+                                       .orderId(order.getId())
+                                       .amount(order.getAmount())
+                                       .paymentMode(request.getPaymentMode())
+//                                       .referenceNumber("eee")
+                                       .build();
+    String orderStatus = null;
+    try {
+      paymentService.doPayment(paymentRequest);
+      log.info("Payment done successfully. Changing the order status to PLACED");
+      orderStatus = "PLACED";
+    }
+    catch (Exception e) {
+      log.error("Error occurred in payment. Changing order status to PAYMENT_FAILED");
+      orderStatus = "PAYMENT_FAILED";
+    }
+    order.setOrderStatus(orderStatus);
+    orderRepository.save(order);
+    log.info("Creating a payment request with status {}", orderStatus);
     return order.getId();
   }
 }
