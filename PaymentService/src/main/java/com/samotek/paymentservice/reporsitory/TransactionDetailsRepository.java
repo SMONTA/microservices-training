@@ -1,5 +1,7 @@
 package com.samotek.paymentservice.reporsitory;
 
+import com.samotek.paymentservice.entity.TransactionDetails;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -7,5 +9,5 @@ import org.springframework.stereotype.Repository;
  * @date 12/25/22
  */
 @Repository
-public interface TransactionDetailsRepository {
+public interface TransactionDetailsRepository extends JpaRepository<TransactionDetails, Long> {
 }

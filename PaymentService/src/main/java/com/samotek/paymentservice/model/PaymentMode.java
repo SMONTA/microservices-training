@@ -1,4 +1,4 @@
-package com.samotek.orderservice.model;
+package com.samotek.paymentservice.model;
 
 /**
  * @author Saber Montassar [montassar.saber1@gmail.com]
