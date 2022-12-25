@@ -1,7 +1,9 @@
 package com.samotek.orderservice.entity;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -20,6 +22,8 @@ import java.time.Instant;
 @Table(name = "ORDER_DETAILS")
 @Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Order {
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)

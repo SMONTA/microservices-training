@@ -1,10 +1,12 @@
 package com.samotek.orderservice.service;
 
 import com.samotek.orderservice.entity.Order;
+import com.samotek.orderservice.exception.CustomException;
 import com.samotek.orderservice.external.client.PaymentService;
 import com.samotek.orderservice.external.client.ProductService;
 import com.samotek.orderservice.external.request.PaymentRequest;
 import com.samotek.orderservice.model.OrderRequest;
+import com.samotek.orderservice.model.OrderResponse;
 import com.samotek.orderservice.repository.OrderRepository;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,5 +70,20 @@ public class OrderServiceImpl implements OrderService {
     orderRepository.save(order);
     log.info("Creating a payment request with status {}", orderStatus);
     return order.getId();
+  }
+
+  @Override
+  public OrderResponse getOrderDetails(long orderId) {
+    var orderEntity = orderRepository.findById(orderId)
+                                     .orElseThrow(() -> new CustomException("No order found that match the id: "
+                                                                            + orderId, "ORDER_NOT_FOUND", 500));
+
+    return OrderResponse.builder()
+                        .orderId(orderId)
+                        .amount(orderEntity.getAmount())
+                        .orderDate(orderEntity.getOrderDate())
+                        .orderStatus(orderEntity.getOrderStatus())
+                        .build();
+
   }
 }
