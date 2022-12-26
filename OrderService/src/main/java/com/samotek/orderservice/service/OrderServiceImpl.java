@@ -4,6 +4,7 @@ import com.samotek.orderservice.entity.Order;
 import com.samotek.orderservice.exception.CustomException;
 import com.samotek.orderservice.external.client.PaymentService;
 import com.samotek.orderservice.external.client.ProductService;
+import com.samotek.orderservice.external.reponse.PaymentResponse;
 import com.samotek.orderservice.external.reponse.ProductResponse;
 import com.samotek.orderservice.external.request.PaymentRequest;
 import com.samotek.orderservice.model.OrderRequest;
@@ -98,12 +99,26 @@ public class OrderServiceImpl implements OrderService {
                                     .price(pResponse.getPrice())
                                     .build();
 
+//    get PaymentDetails
+    log.info("Fetching payment details of the order {}", orderId);
+    var paymentResponse = restTemplate.getForObject(
+        "http://PAYMENT-SERVICE/payment/v1/order/" + orderId,
+        PaymentResponse.class
+    );
+    var paymentDetails = OrderResponse.PaymentDetails.builder()
+                                                     .paymentId(paymentResponse.getPaymentId())
+                                                     .paymentMode(paymentResponse.getPaymentMode())
+                                                     .paymentDate(paymentResponse.getPaymentDate())
+                                                     .paymentStatus(paymentResponse.getStatus())
+                                                     .build();
+
     return OrderResponse.builder()
                         .orderId(orderId)
                         .amount(orderEntity.getAmount())
                         .orderDate(orderEntity.getOrderDate())
                         .orderStatus(orderEntity.getOrderStatus())
                         .productDetails(pDetails)
+                        .paymentDetails(paymentDetails)
                         .build();
 
   }
