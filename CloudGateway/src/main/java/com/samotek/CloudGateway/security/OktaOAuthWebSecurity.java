@@ -27,6 +27,5 @@ public class OktaOAuthWebSecurity {
                 .jwt();
 
      return httpSecurity.build();
-
   }
 }
