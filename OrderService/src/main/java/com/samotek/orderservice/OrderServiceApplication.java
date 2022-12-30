@@ -24,42 +24,46 @@ import java.util.Arrays;
 public class OrderServiceApplication {
 
   @Autowired
-  private OAuth2AuthorizedClientRepository oAuth2AuthorizedClientRepository;
-
-  @Autowired
   private ClientRegistrationRepository clientRegistrationRepository;
+  @Autowired
+  private OAuth2AuthorizedClientRepository oAuth2AuthorizedClientRepository;
 
   public static void main(String[] args) {
     SpringApplication.run(OrderServiceApplication.class, args);
   }
 
-
   @Bean
   @LoadBalanced
   public RestTemplate restTemplate() {
-    var restTemplate = new RestTemplate();
-    restTemplate.setInterceptors(Arrays.asList(
-        new RestTemplateInterceptor(clientManager(
-            clientRegistrationRepository,
-            oAuth2AuthorizedClientRepository)))
-		);
+    RestTemplate restTemplate = new RestTemplate();
+    restTemplate.setInterceptors(
+        Arrays.asList(
+            new RestTemplateInterceptor(
+                clientManager(clientRegistrationRepository
+                    , oAuth2AuthorizedClientRepository))));
     return restTemplate;
   }
-
 
   @Bean
   public OAuth2AuthorizedClientManager clientManager(
       ClientRegistrationRepository clientRegistrationRepository,
       OAuth2AuthorizedClientRepository oAuth2AuthorizedClientRepository
   ) {
-    OAuth2AuthorizedClientProvider clientProvider =
-        OAuth2AuthorizedClientProviderBuilder.builder()
-                                             .clientCredentials()
-                                             .build();
+    OAuth2AuthorizedClientProvider oAuth2AuthorizedClientProvider
+        = OAuth2AuthorizedClientProviderBuilder
+        .builder()
+        .clientCredentials()
+        .build();
+
     DefaultOAuth2AuthorizedClientManager oAuth2AuthorizedClientManager
-        = new DefaultOAuth2AuthorizedClientManager(clientRegistrationRepository,
-                                                   oAuth2AuthorizedClientRepository);
-    oAuth2AuthorizedClientManager.setAuthorizedClientProvider(clientProvider);
+        = new DefaultOAuth2AuthorizedClientManager(
+        clientRegistrationRepository,
+        oAuth2AuthorizedClientRepository);
+
+    oAuth2AuthorizedClientManager.setAuthorizedClientProvider(
+        oAuth2AuthorizedClientProvider
+    );
+
     return oAuth2AuthorizedClientManager;
   }
 

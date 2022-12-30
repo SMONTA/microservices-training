@@ -15,9 +15,7 @@ import java.io.IOException;
  */
 public class RestTemplateInterceptor implements ClientHttpRequestInterceptor {
 
-
-  private OAuth2AuthorizedClientManager oAuth2AuthorizedClientManager;
-
+  private final OAuth2AuthorizedClientManager oAuth2AuthorizedClientManager;
 
   public RestTemplateInterceptor(
       OAuth2AuthorizedClientManager oAuth2AuthorizedClientManager) {
@@ -29,12 +27,13 @@ public class RestTemplateInterceptor implements ClientHttpRequestInterceptor {
   public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution)
       throws IOException {
     request.getHeaders().add("Authorization",
-                             "Bearer" +
-                             oAuth2AuthorizedClientManager.authorize(
-                                 OAuth2AuthorizeRequest.withClientRegistrationId("internal-client")
-                                 .principal("internal")
-                                 .build())
-                             .getAccessToken().getTokenValue());
+                             "Bearer " +
+                             oAuth2AuthorizedClientManager
+                                 .authorize(OAuth2AuthorizeRequest
+                                                .withClientRegistrationId("internal-client")
+                                                .principal("internal")
+                                                .build())
+                                 .getAccessToken().getTokenValue());
 
     return execution.execute(request, body);
   }

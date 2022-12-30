@@ -1,6 +1,7 @@
 package com.samotek.CloudGateway.controller;
 
 import com.samotek.CloudGateway.model.AuthenticationResponse;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.GrantedAuthority;
@@ -21,6 +22,7 @@ import java.util.stream.Collectors;
  */
 @RestController
 @RequestMapping("/authenticate")
+@Log4j2
 public class AuthenticationController {
 
   @GetMapping("/login")
@@ -29,15 +31,15 @@ public class AuthenticationController {
       Model model,
       @RegisteredOAuth2AuthorizedClient("okta") OAuth2AuthorizedClient client
   ) {
-
+    log.info("Login attempt for userId: {}",oidcUser.getEmail());
     var authenticationResponse =
         AuthenticationResponse.builder()
                               .userId(oidcUser.getEmail())
                               .accessToken(client.getAccessToken().getTokenValue())
                               .refreshToken(client.getRefreshToken().getTokenValue())
-                              .expireAt(client.getAccessToken()
-                                              .getExpiresAt()
-                                              .getEpochSecond())
+                              .expiresAt(client.getAccessToken()
+                                               .getExpiresAt()
+                                               .getEpochSecond())
                               .authorityList(oidcUser.getAuthorities()
                                                      .stream()
                                                      .map(GrantedAuthority::getAuthority)

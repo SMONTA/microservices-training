@@ -3,6 +3,7 @@ package com.samotek.orderservice.external.intercepter;
 import feign.RequestInterceptor;
 import feign.RequestTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.security.oauth2.client.OAuth2AuthorizeRequest;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientManager;
 
@@ -10,6 +11,7 @@ import org.springframework.security.oauth2.client.OAuth2AuthorizedClientManager;
  * @author Saber Montassar [montassar.saber1@gmail.com]
  * @date 12/28/22
  */
+@Configuration
 public class OAuthRequestInterceptor implements RequestInterceptor {
 
   @Autowired
