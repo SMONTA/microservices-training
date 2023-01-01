@@ -54,7 +54,7 @@ public class OrderServiceImpl implements OrderService {
                      .quantity(request.getQuantity())
                      .build();
 
-    orderRepository.save(order);
+    order = orderRepository.save(order);
     log.info("Order successfully created with id: {}", order.getId());
     var paymentRequest = PaymentRequest.builder()
                                        .orderId(order.getId())
@@ -73,7 +73,7 @@ public class OrderServiceImpl implements OrderService {
       orderStatus = "PAYMENT_FAILED";
     }
     order.setOrderStatus(orderStatus);
-    orderRepository.save(order);
+    order = orderRepository.save(order);
     log.info("Creating a payment request with status {}", orderStatus);
     return order.getId();
   }
