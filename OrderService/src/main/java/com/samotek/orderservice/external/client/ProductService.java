@@ -20,7 +20,7 @@ public interface ProductService {
   ResponseEntity<Void> reduceQuantity(@PathVariable("id") long productId,
                                              @RequestParam long quantity);
 
-  default void productFallback(Exception e){
+  default ResponseEntity<Void>  productFallback(Exception e){
     throw new CustomException("Product Service is not available", "PRODUCT_SERVICE_UNAVAILABLE", 500);
   }
 }
