@@ -84,7 +84,7 @@ public class OrderServiceImpl implements OrderService {
     log.info("Getting order details for the order id {}", orderId);
     var orderEntity = orderRepository.findById(orderId)
                                      .orElseThrow(() -> new CustomException("No order found that match the id: "
-                                                                            + orderId, "ORDER_NOT_FOUND", 500));
+                                                                            + orderId, "ORDER_NOT_FOUND", 404));
 //    getting product details
     log.info("Fetching product details for the product id: {} ", orderEntity.getProductId());
     var pResponse = restTemplate.getForObject(
