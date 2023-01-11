@@ -54,18 +54,18 @@ services:
     image: samotek/config-server:0.0.1
     container_name: config-server
     environment:
-      - EUREKA_SERVER_URL=service-registry
+      - EUREKA_SERVER_URL=192.168.1.6
     ports:
       - '9296:9296'
     depends_on:
       - service-registry
-      
+
   cloud-gateway:
     image: samotek/cloud-gateway:0.0.1
     container_name: cloud-gateway
     environment:
-      - EUREKA_SERVER_URL=service-registry
-      - CONFIG_SERVER_URL=config-server
+      - EUREKA_SERVER_URL=192.168.1.6
+      - CONFIG_SERVER_URL=192.168.1.6
     ports:
       - '9090:9090'
     depends_on:
