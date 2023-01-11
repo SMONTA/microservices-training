@@ -43,6 +43,34 @@ services:
       - '6379:6379'
     volumes:
       - 'redis_data:/bitnami/redis/data'
+  
+  service-registry:
+    image: samotek/service-registry:0.0.1
+    container_name: service-registry
+    ports:
+      - '8761:8761'
+      
+  config-server:
+    image: samotek/config-server:0.0.1
+    container_name: config-server
+    environment:
+      - EUREKA_SERVER_URL=service-registry
+    ports:
+      - '9296:9296'
+    depends_on:
+      - service-registry
+      
+  cloud-gateway:
+    image: samotek/cloud-gateway:0.0.1
+    container_name: cloud-gateway
+    environment:
+      - EUREKA_SERVER_URL=service-registry
+      - CONFIG_SERVER_URL=config-server
+    ports:
+      - '9090:9090'
+    depends_on:
+      - config-server
+
 # Names our volume
 volumes:
   db:
