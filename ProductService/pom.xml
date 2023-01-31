@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.samotek</groupId>
 	<artifactId>ProductService</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.1</version>
 	<name>ProductService</name>
 	<description>micro-service to handle products</description>
 	<properties>
@@ -95,6 +95,27 @@
 							<artifactId>lombok</artifactId>
 						</exclude>
 					</excludes>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>com.google.cloud.tools</groupId>
+				<artifactId>jib-maven-plugin</artifactId>
+				<!--				<version>3.3.1</version>-->
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>dockerBuild</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<from>
+						<image>openjdk:11</image>
+					</from>
+					<to>
+						<image>samotek/product-service:${project.version}</image>
+					</to>
 				</configuration>
 			</plugin>
 		</plugins>

@@ -1,0 +1,104 @@
+# Persisted valume
+# Persisted Volume Claim
+# StatefulSet - MySql
+# Headless
+# configuration needed
+
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: mysql-pv
+spec:
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: manual
+  hostPath:
+    path: "/mnt/data/volume"
+    type: DirectoryOrCreate
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mysql-pvc
+spec:
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: manual
+  accessModes:
+    - ReadWriteOnce
+
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mysql
+spec:
+  selector:
+    matchLabels:
+      app: myapp
+  serviceName: mysql
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      containers:
+      - name: myapp
+        image: mysql:8.0
+        ports:
+        - containerPort: 3306
+          name: mysql
+        env:
+          - name: MYSQL_DATABASE
+            value: e_commerce_db
+           # So you don't have to use root, but you can if you like
+          - name: MYSQL_USER 
+            value: saber
+      # You can use whatever password you like
+          - name:  MYSQL_PASSWORD 
+            value: montassar
+      # Password for root access
+          - name: MYSQL_ROOT_PASSWORD 
+            value: montassar
+
+        volumeMounts:
+        - name: mysql-persistent-storage
+          mountPath: /var/lib/mysql
+        - name: mysql-initdb
+          mountPath: /docker-entrypoint-initdb.d
+    volumes: 
+      - name: mysql-persistent-storage
+        persistentVolumeClaim: 
+          claimName: mysql-pvc
+      - name: mysql-initdb
+        configMap: 
+          name: mysql-init-cm
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mysql-init-cm
+data:
+  init.sql: |
+      CREATE DATABASE IF NOT EXISTS paymentdb;
+      CREATE DATABASE IF NOT EXISTS productdb;
+      CREATE DATABASE IF NOT EXISTS orderdb;
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql
+spec:
+  clusterIP: None
+  selector:
+    app: mysal
+  ports:
+  - port: 3306
