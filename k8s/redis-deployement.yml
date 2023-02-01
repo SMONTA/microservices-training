@@ -22,11 +22,11 @@ spec:
         args:
           - "--protected-mode"
           - "no"
-        env:
-          - name: ALLOW_EMPTY_PASSWORD 
-            value: yes
-          - name: REDIS_DISABLE_COMMANDS 
-            value: FLUSHDB,FLUSHALL
+        # env:
+        #   - name: ALLOW_EMPTY_PASSWORD 
+        #     value: yes
+        #   - name: REDIS_DISABLE_COMMANDS 
+        #     value: FLUSHDB,FLUSHALL
 
 ---
 apiVersion: v1

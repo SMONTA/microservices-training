@@ -40,7 +40,7 @@ metadata:
 spec:
   selector:
     matchLabels:
-      app: myapp
+      app: mysql
   serviceName: mysql
   replicas: 1
   template:
@@ -49,7 +49,7 @@ spec:
         app: mysql
     spec:
       containers:
-      - name: myapp
+      - name: mysql
         image: mysql:8.0
         ports:
         - containerPort: 3306
@@ -72,13 +72,13 @@ spec:
           mountPath: /var/lib/mysql
         - name: mysql-initdb
           mountPath: /docker-entrypoint-initdb.d
-    volumes: 
-      - name: mysql-persistent-storage
-        persistentVolumeClaim: 
-          claimName: mysql-pvc
-      - name: mysql-initdb
-        configMap: 
-          name: mysql-init-cm
+      volumes: 
+        - name: mysql-persistent-storage
+          persistentVolumeClaim: 
+            claimName: mysql-pvc
+        - name: mysql-initdb
+          configMap: 
+            name: mysql-init-cm
 
 ---
 apiVersion: v1
